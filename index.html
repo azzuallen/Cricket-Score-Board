@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cricket Scoreboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 20px;
+        }
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #333;
+            color: #fff;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        input {
+            width: 50px;
+            text-align: center;
+        }
+        button {
+            padding: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        #totalRuns, #totalWickets {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        #teamSelectors {
+            margin-bottom: 10px;
+        }
+        #scoreboardContainer {
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Azzu Cricket Scoreboard</h1>
+
+    <div id="teamSelectors">
+        <label for="teamSelector">Select Team:</label>
+        <select id="teamSelector">
+            <option value="A">Team A</option>
+            <option value="B">Team B</option>
+        </select>
+    </div>
+
+    <div id="scoreboardContainer">
+        <div>
+            <h2>Team A Scores</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Over</th>
+                        <th>Runs</th>
+                        <th>Wickets</th>
+                    </tr>
+                </thead>
+                <tbody id="scoreboardBodyA">
+                    <!-- Team A Over-by-Over scores will be dynamically updated here -->
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <h2>Team B Scores</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Over</th>
+                        <th>Runs</th>
+                        <th>Wickets</th>
+                    </tr>
+                </thead>
+                <tbody id="scoreboardBodyB">
+                    <!-- Team B Over-by-Over scores will be dynamically updated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="totalRuns">Total Runs: Team A - 0, Team B - 0</div>
+    <div id="totalWickets">Total Wickets: Team A - 0, Team B - 0</div>
+
+    <h2>Enter Scores for Each Over</h2>
+
+    <label for="scoreOver">Per Over Score:</label>
+    <input type="number" id="scoreOver">
+
+    <label for="overWickets">Per Over Wickets:</label>
+    <input type="number" id="overWickets">
+
+    <br>
+
+    <button onclick="updateScores()">Update Scores</button>
+    <button onclick="resetScores()">Reset Scores</button>
+
+    <script>
+        let selectedTeam = 'A';
+        let totalRunsA = 0;
+        let totalWicketsA = 0;
+        let totalRunsB = 0;
+        let totalWicketsB = 0;
+
+        function updateScores() {
+            // Get input values
+            const overScore = parseInt(document.getElementById('scoreOver').value) || 0;
+            const overWickets = parseInt(document.getElementById('overWickets').value) || 0;
+
+            // Create a new row for the selected team
+            const scoreboardBody = getScoreboardBody(selectedTeam);
+            const newRow = scoreboardBody.insertRow();
+
+            // Create cells for the new row
+            const overCell = newRow.insertCell(0);
+            const runsCell = newRow.insertCell(1);
+            const wicketsCell = newRow.insertCell(2);
+
+            // Update the cells with input values
+            overCell.innerText = scoreboardBody.children.length;
+            runsCell.innerText = overScore;
+            wicketsCell.innerText = overWickets;
+
+            // Update total runs and wickets
+            updateTotal(selectedTeam, overScore, overWickets);
+
+            // Clear the input fields
+            document.getElementById('scoreOver').value = '';
+            document.getElementById('overWickets').value = '';
+        }
+
+        function resetScores() {
+            // Clear the scoreboards
+            clearScoreboard('A');
+            clearScoreboard('B');
+
+            // Reset total runs and wickets
+            totalRunsA = 0;
+            totalWicketsA = 0;
+            totalRunsB = 0;
+            totalWicketsB = 0;
+
+            // Update total runs and wickets display
+            updateTotalDisplay();
+        }
+
+        function getScoreboardBody(team) {
+            return document.getElementById(`scoreboardBody${team}`);
+        }
+
+        function clearScoreboard(team) {
+            const scoreboardBody = getScoreboardBody(team);
+            scoreboardBody.innerHTML = '';
+        }
+
+        function updateTotal(team, runs, wickets) {
+            if (team === 'A') {
+                totalRunsA += runs;
+                totalWicketsA += wickets;
+            } else if (team === 'B') {
+                totalRunsB += runs;
+                totalWicketsB += wickets;
+            }
+
+            // Update total runs and wickets display
+            updateTotalDisplay();
+        }
+
+        function updateTotalDisplay() {
+            document.getElementById('totalRuns').innerText = `Total Runs: Team A - ${totalRunsA}, Team B - ${totalRunsB}`;
+            document.getElementById('totalWickets').innerText = `Total Wickets: Team A - ${totalWicketsA}, Team B - ${totalWicketsB}`;
+        }
+
+        // Update selected team when the user changes the dropdown
+        document.getElementById('teamSelector').addEventListener('change', function() {
+            selectedTeam = this.value;
+        });
+    </script>
+
+</body>
+</html>
